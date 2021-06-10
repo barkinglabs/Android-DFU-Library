@@ -26,13 +26,10 @@ import android.annotation.TargetApi;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.le.BluetoothLeScanner;
 import android.bluetooth.le.ScanCallback;
-import android.bluetooth.le.ScanFilter;
 import android.bluetooth.le.ScanResult;
 import android.bluetooth.le.ScanSettings;
 import android.os.Build;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Locale;
 
 /**
@@ -92,18 +89,7 @@ public class BootloaderScannerLollipop extends ScanCallback implements Bootloade
          * See {@linktourl https://android.googlesource.com/platform/packages/apps/Bluetooth/+/319aeae6f4ebd13678b4f77375d1804978c4a1e1}
          */
         final ScanSettings settings = new ScanSettings.Builder().setScanMode(ScanSettings.SCAN_MODE_LOW_LATENCY).build();
-        if (adapter.isOffloadedFilteringSupported() && Build.VERSION.SDK_INT >= Build.VERSION_CODES.O_MR1) {
-            final List<ScanFilter> filters = new ArrayList<>();
-            filters.add(new ScanFilter.Builder().setDeviceAddress(mDeviceAddress).build());
-            filters.add(new ScanFilter.Builder().setDeviceAddress(mDeviceAddressIncremented).build());
-            scanner.startScan(filters, settings, this);
-        } else {
-            /*
-             * Scanning with filters does not work on Nexus 9 (Android 5.1). No devices are found and scanner terminates on timeout.
-             * We will match the device address in the callback method instead. It's not like it should be, but at least it works.
-             */
-            scanner.startScan(null, settings, this);
-        }
+        scanner.startScan(null, settings, this);
 
         try {
             synchronized (mLock) {
