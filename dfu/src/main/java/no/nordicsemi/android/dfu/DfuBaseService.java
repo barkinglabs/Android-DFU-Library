@@ -50,6 +50,7 @@ import android.provider.MediaStore;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.app.NotificationCompat;
+import androidx.core.content.ContextCompat;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 import android.util.Log;
 
@@ -1025,13 +1026,18 @@ public abstract class DfuBaseService extends IntentService implements DfuProgres
 		super.onCreate();
 
 		DEBUG = isDebug();
-		logi("DFU service created. Version: " + BuildConfig.VERSION_NAME);
+		logi("DFU service created. Version: 1.11.1");
 		initialize();
 
 		final LocalBroadcastManager manager = LocalBroadcastManager.getInstance(this);
 		final IntentFilter actionFilter = makeDfuActionIntentFilter();
 		manager.registerReceiver(mDfuActionReceiver, actionFilter);
-		registerReceiver(mDfuActionReceiver, actionFilter); // Additionally we must register this receiver as a non-local to get broadcasts from the notification actions
+
+		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE) {
+			registerReceiver(mDfuActionReceiver, actionFilter, Context.RECEIVER_NOT_EXPORTED); // Additionally we must register this receiver as a non-local to get broadcasts from the notification actions
+		} else {
+			registerReceiver(mDfuActionReceiver, actionFilter);
+		}
 
 		final IntentFilter filter = new IntentFilter();
 		// As we no longer perform any action based on this broadcast, we may log all ACL events

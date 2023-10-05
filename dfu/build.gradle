@@ -1,13 +1,19 @@
-apply plugin: 'com.android.library'
+plugins {
+    id 'com.android.library'
+}
 
 android {
-    compileSdkVersion 29
+    compileSdk 34
 
     defaultConfig {
-        minSdkVersion 18
-        targetSdkVersion 29
+        minSdk 18
+        targetSdk 34
         versionCode 25
         versionName VERSION_NAME
+    }
+
+    buildFeatures {
+        buildConfig true
     }
 
     buildTypes {
@@ -16,6 +22,8 @@ android {
             consumerProguardFiles 'dfu-proguard-rules.pro'
         }
     }
+
+    namespace = "no.nordicsemi.android.dfu"
 }
 
 dependencies {
@@ -25,4 +33,4 @@ dependencies {
     implementation 'com.google.code.gson:gson:2.8.6'
 }
 
-apply from: rootProject.file('gradle/gradle-bintray-push.gradle')
+//apply from: rootProject.file('gradle/gradle-bintray-push.gradle')
